@@ -1,0 +1,5 @@
+2026-09-16 10:21:33 INFO Application started
+2026-09-16 10:21:35 INFO Connecting to database
+2026-09-16 10:21:36 ERROR Connection refused
+2026-09-16 10:21:36 ERROR Database connection failed
+2026-09-16 10:21:37 ERROR Retry limit exceeded
