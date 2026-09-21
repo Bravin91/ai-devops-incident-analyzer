@@ -12,6 +12,10 @@ def test_database_connection_failure():
 
     assert result["severity"] == "HIGH"
     assert result["issue"] == "Database connectivity failure"
+    assert result["category"] == "DATABASE"
+    assert "ERROR: Connection refused" in result["evidence"]
+    assert "ERROR: Database connection failed" in result["evidence"]
+    assert "ERROR: Retry limit exceeded" in result["evidence"]
 
 
 def test_memory_exhaustion():
@@ -24,6 +28,7 @@ def test_memory_exhaustion():
 
     assert result["severity"] == "CRITICAL"
     assert result["issue"] == "Memory exhaustion"
+    assert result["category"] == "MEMORY"
 
 
 def test_disk_space_exhaustion():
@@ -36,6 +41,7 @@ def test_disk_space_exhaustion():
 
     assert result["severity"] == "HIGH"
     assert result["issue"] == "Disk space exhaustion"
+    assert result["category"] == "DISK"
 
 
 def test_http_500_error():
@@ -48,6 +54,7 @@ def test_http_500_error():
 
     assert result["severity"] == "HIGH"
     assert result["issue"] == "Application server error"
+    assert result["category"] == "APPLICATION"
 
 
 def test_timeout():
@@ -60,6 +67,7 @@ def test_timeout():
 
     assert result["severity"] == "HIGH"
     assert result["issue"] == "Request or service timeout"
+    assert result["category"] == "NETWORK"
 
 
 def test_no_incident():
@@ -72,3 +80,5 @@ def test_no_incident():
 
     assert result["severity"] == "LOW"
     assert result["issue"] == "No significant issue detected"
+    assert result["category"] == "NONE"
+    assert result["evidence"] == []

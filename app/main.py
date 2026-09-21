@@ -9,7 +9,13 @@ def main():
 
     print("\n===== INCIDENT ANALYSIS =====")
     print(f"Severity: {result['severity']}")
+    print(f"Category: {result['category']}")
     print(f"Issue: {result['issue']}")
+
+    print("\nEvidence:")
+
+    for evidence in result["evidence"]:
+        print(f"- {evidence}")
 
     print("\nRecommended Actions:")
 

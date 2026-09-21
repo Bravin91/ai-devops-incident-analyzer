@@ -1,13 +1,18 @@
 def analyze_log(log_text):
     """
     Analyze application logs and identify potential incidents.
+    Returns structured incident information that can later
+    be provided to an AI/LLM for deeper analysis.
     """
 
+    original_log = log_text
     log_text = log_text.lower()
 
     result = {
         "severity": "LOW",
         "issue": "No significant issue detected",
+        "category": "NONE",
+        "evidence": [],
         "recommendations": []
     }
 
@@ -15,6 +20,15 @@ def analyze_log(log_text):
     if "connection refused" in log_text:
         result["severity"] = "HIGH"
         result["issue"] = "Database connectivity failure"
+        result["category"] = "DATABASE"
+
+        result["evidence"] = [
+            line.strip()
+            for line in original_log.splitlines()
+            if "connection refused" in line.lower()
+            or "database connection failed" in line.lower()
+            or "retry limit exceeded" in line.lower()
+        ]
 
         result["recommendations"] = [
             "Check whether the database service is running",
@@ -27,6 +41,14 @@ def analyze_log(log_text):
     elif "out of memory" in log_text or "oom" in log_text:
         result["severity"] = "CRITICAL"
         result["issue"] = "Memory exhaustion"
+        result["category"] = "MEMORY"
+
+        result["evidence"] = [
+            line.strip()
+            for line in original_log.splitlines()
+            if "out of memory" in line.lower()
+            or "oom" in line.lower()
+        ]
 
         result["recommendations"] = [
             "Check current memory utilization",
@@ -39,6 +61,14 @@ def analyze_log(log_text):
     elif "no space left on device" in log_text or "disk full" in log_text:
         result["severity"] = "HIGH"
         result["issue"] = "Disk space exhaustion"
+        result["category"] = "DISK"
+
+        result["evidence"] = [
+            line.strip()
+            for line in original_log.splitlines()
+            if "no space left on device" in line.lower()
+            or "disk full" in line.lower()
+        ]
 
         result["recommendations"] = [
             "Check filesystem usage with df -h",
@@ -51,6 +81,14 @@ def analyze_log(log_text):
     elif "500 internal server error" in log_text or "http 500" in log_text:
         result["severity"] = "HIGH"
         result["issue"] = "Application server error"
+        result["category"] = "APPLICATION"
+
+        result["evidence"] = [
+            line.strip()
+            for line in original_log.splitlines()
+            if "500 internal server error" in line.lower()
+            or "http 500" in line.lower()
+        ]
 
         result["recommendations"] = [
             "Check application logs",
@@ -63,6 +101,14 @@ def analyze_log(log_text):
     elif "timeout" in log_text or "timed out" in log_text:
         result["severity"] = "HIGH"
         result["issue"] = "Request or service timeout"
+        result["category"] = "NETWORK"
+
+        result["evidence"] = [
+            line.strip()
+            for line in original_log.splitlines()
+            if "timeout" in line.lower()
+            or "timed out" in line.lower()
+        ]
 
         result["recommendations"] = [
             "Check network connectivity",
