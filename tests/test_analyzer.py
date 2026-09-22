@@ -1,4 +1,5 @@
 from app.analyzer import analyze_log
+from app.ai_analyzer import build_incident_prompt, analyze_with_ai
 
 
 def test_database_connection_failure():
@@ -82,3 +83,48 @@ def test_no_incident():
     assert result["issue"] == "No significant issue detected"
     assert result["category"] == "NONE"
     assert result["evidence"] == []
+
+
+def test_ai_prompt_contains_incident_information():
+    incident = {
+        "severity": "HIGH",
+        "category": "DATABASE",
+        "issue": "Database connectivity failure",
+        "evidence": [
+            "ERROR: Connection refused",
+            "ERROR: Database connection failed"
+        ],
+        "recommendations": [
+            "Check whether the database service is running"
+        ]
+    }
+
+    prompt = build_incident_prompt(incident)
+
+    assert "DATABASE" in prompt
+    assert "Database connectivity failure" in prompt
+    assert "ERROR: Connection refused" in prompt
+
+
+def test_ai_analysis_returns_expected_structure():
+    incident = {
+        "severity": "HIGH",
+        "category": "DATABASE",
+        "issue": "Database connectivity failure",
+        "evidence": [
+            "ERROR: Connection refused"
+        ],
+        "recommendations": [
+            "Check whether the database service is running"
+        ]
+    }
+
+    result = analyze_with_ai(incident)
+
+    assert "root_cause" in result
+    assert "investigation" in result
+    assert "remediation" in result
+    assert "additional_evidence" in result
+
+    assert len(result["investigation"]) > 0
+    assert len(result["remediation"]) > 0
