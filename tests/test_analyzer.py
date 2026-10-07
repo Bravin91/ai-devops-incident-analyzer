@@ -119,7 +119,21 @@ def test_ai_analysis_returns_expected_structure():
         ]
     }
 
-    result = analyze_with_ai(incident)
+    def fake_ai_client(prompt):
+        return {
+            "root_cause": "Database service is unavailable",
+            "investigation": [
+                "Check database service status"
+            ],
+            "remediation": [
+                "Restore database service"
+            ],
+            "additional_evidence": [
+                "Database service status"
+            ]
+        }
+
+    result = analyze_with_ai(incident, ai_client=fake_ai_client)
 
     assert "root_cause" in result
     assert "investigation" in result
